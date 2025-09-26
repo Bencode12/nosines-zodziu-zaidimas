@@ -39,6 +39,14 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
@@ -46,6 +54,17 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        crossword: {
+          cell: "hsl(var(--crossword-cell))",
+          "cell-active": "hsl(var(--crossword-cell-active))",
+          "cell-correct": "hsl(var(--crossword-cell-correct))",
+          "cell-border": "hsl(var(--crossword-cell-border))",
+          empty: "hsl(var(--crossword-empty))",
+        },
+        tooltip: {
+          bg: "hsl(var(--tooltip-bg))",
+          text: "hsl(var(--tooltip-text))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -57,6 +76,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      backgroundImage: {
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-subtle": "var(--gradient-subtle)",
+      },
+      boxShadow: {
+        soft: "var(--shadow-soft)",
+        tooltip: "var(--shadow-tooltip)",
       },
       borderRadius: {
         lg: "var(--radius)",
