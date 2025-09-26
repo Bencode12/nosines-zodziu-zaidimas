@@ -115,13 +115,15 @@ export default function CrosswordGrid() {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!selectedCell) return;
 
     const {row, col} = selectedCell;
     const key = e.key.toUpperCase();
 
-    if (key.match(/[A-ZĄČĘĖĮŠŲŪ]/)) {
+    // Only handle specific keys and prevent default for those we process
+    if (key.match(/^[A-ZĄČĘĖĮŠŲŪ]$/)) {
+      e.preventDefault();
       const newAnswers = [...userAnswers];
       newAnswers[row][col] = key;
       setUserAnswers(newAnswers);
@@ -132,10 +134,39 @@ export default function CrosswordGrid() {
       // Move to next cell
       moveToNextCell(row, col);
     } else if (key === 'BACKSPACE') {
+      e.preventDefault();
       const newAnswers = [...userAnswers];
       newAnswers[row][col] = '';
       setUserAnswers(newAnswers);
       checkCompletedWords(newAnswers);
+    } else if (key === 'ARROWLEFT' || key === 'ARROWRIGHT' || key === 'ARROWUP' || key === 'ARROWDOWN') {
+      e.preventDefault();
+      handleArrowKeys(key, row, col);
+    }
+  };
+
+  const handleArrowKeys = (key: string, currentRow: number, currentCol: number) => {
+    let newRow = currentRow;
+    let newCol = currentCol;
+
+    switch (key) {
+      case 'ARROWLEFT':
+        newCol = Math.max(0, currentCol - 1);
+        break;
+      case 'ARROWRIGHT':
+        newCol = Math.min(GRID_SIZE - 1, currentCol + 1);
+        break;
+      case 'ARROWUP':
+        newRow = Math.max(0, currentRow - 1);
+        break;
+      case 'ARROWDOWN':
+        newRow = Math.min(GRID_SIZE - 1, currentRow + 1);
+        break;
+    }
+
+    // Find the nearest editable cell in the direction
+    if (grid[newRow][newCol].isEditable) {
+      setSelectedCell({row: newRow, col: newCol});
     }
   };
 
@@ -198,7 +229,7 @@ export default function CrosswordGrid() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-8 p-6" onKeyDown={handleKeyPress} tabIndex={0}>
+    <div className="flex flex-col items-center gap-8 p-6" onKeyDown={handleKeyDown} tabIndex={0}>
       <div className="text-center">
         <h1 className="text-3xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
           Lietuvių kalbos kryžiažodis
