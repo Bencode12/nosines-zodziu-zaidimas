@@ -73,6 +73,8 @@ export default function CrosswordGrid() {
   const [selectedCell, setSelectedCell] = useState<{row: number, col: number} | null>(null);
   const [hoveredWord, setHoveredWord] = useState<number | null>(null);
   const [completedWords, setCompletedWords] = useState<Set<number>>(new Set());
+  const [cellAnimations, setCellAnimations] = useState<{[key: string]: string}>({});
+  const [wordFeedback, setWordFeedback] = useState<{[wordId: number]: 'correct' | 'incorrect' | null}>({});
 
   useEffect(() => {
     initializeGrid();
@@ -128,8 +130,8 @@ export default function CrosswordGrid() {
       newAnswers[row][col] = key;
       setUserAnswers(newAnswers);
       
-      // Check if words are completed
-      checkCompletedWords(newAnswers);
+      // Check if words are completed after a small delay to show the filled word
+      setTimeout(() => checkCompletedWords(newAnswers), 100);
       
       // Move to next cell
       moveToNextCell(row, col);
@@ -138,6 +140,11 @@ export default function CrosswordGrid() {
       const newAnswers = [...userAnswers];
       newAnswers[row][col] = '';
       setUserAnswers(newAnswers);
+      
+      // Clear any existing animations when user starts editing
+      setCellAnimations({});
+      setWordFeedback({});
+      
       checkCompletedWords(newAnswers);
     } else if (key === 'ARROWLEFT' || key === 'ARROWRIGHT' || key === 'ARROWUP' || key === 'ARROWDOWN') {
       e.preventDefault();
@@ -172,21 +179,72 @@ export default function CrosswordGrid() {
 
   const checkCompletedWords = (answers: string[][]) => {
     const completed = new Set<number>();
+    const newCellAnimations: {[key: string]: string} = {};
     
     words.forEach(word => {
       let isComplete = true;
+      let isAttempted = true; // Check if all cells are filled
+      let userWord = '';
+      
+      // Check if word is fully filled and build user's answer
       for (let i = 0; i < word.word.length; i++) {
         const row = word.direction === 'across' ? word.startRow : word.startRow + i;
         const col = word.direction === 'across' ? word.startCol + i : word.startCol;
         
-        if (answers[row][col] !== word.word[i]) {
+        const userAnswer = answers[row][col];
+        userWord += userAnswer;
+        
+        if (!userAnswer) {
+          isAttempted = false;
+        }
+        
+        if (userAnswer !== word.word[i]) {
           isComplete = false;
-          break;
         }
       }
+      
+      // If word is attempted (all cells filled), give feedback
+      if (isAttempted) {
+        const animationType = isComplete ? 'animate-glow-success' : 'animate-shake-error';
+        
+        // Apply animation to all cells of this word
+        for (let i = 0; i < word.word.length; i++) {
+          const row = word.direction === 'across' ? word.startRow : word.startRow + i;
+          const col = word.direction === 'across' ? word.startCol + i : word.startCol;
+          const cellKey = `${row}-${col}`;
+          newCellAnimations[cellKey] = animationType;
+        }
+        
+        // Set feedback state
+        setWordFeedback(prev => ({
+          ...prev,
+          [word.id]: isComplete ? 'correct' : 'incorrect'
+        }));
+        
+        // Clear animations after they complete
+        setTimeout(() => {
+          setCellAnimations(prev => {
+            const updated = {...prev};
+            for (let i = 0; i < word.word.length; i++) {
+              const row = word.direction === 'across' ? word.startRow : word.startRow + i;
+              const col = word.direction === 'across' ? word.startCol + i : word.startCol;
+              const cellKey = `${row}-${col}`;
+              delete updated[cellKey];
+            }
+            return updated;
+          });
+          
+          setWordFeedback(prev => ({
+            ...prev,
+            [word.id]: null
+          }));
+        }, 1500);
+      }
+      
       if (isComplete) completed.add(word.id);
     });
     
+    setCellAnimations(newCellAnimations);
     setCompletedWords(completed);
   };
 
@@ -209,18 +267,21 @@ export default function CrosswordGrid() {
     const isInHoveredWord = hoveredWord !== null && cell.wordIds.includes(hoveredWord);
     const isCorrect = cell.isEditable && userAnswers[row][col] === cell.letter;
     const hasUserInput = userAnswers[row][col] !== '';
+    const cellKey = `${row}-${col}`;
+    const animation = cellAnimations[cellKey];
 
     return cn(
       'w-10 h-10 border flex items-center justify-center text-lg font-semibold cursor-pointer transition-all duration-200',
       {
         'bg-crossword-empty border-crossword-cell-border': !cell.isEditable,
-        'bg-crossword-cell border-crossword-cell-border hover:bg-crossword-cell-active': cell.isEditable,
-        'ring-2 ring-primary ring-opacity-50 bg-crossword-cell-active': isSelected,
-        'bg-accent/30 border-accent': isInHoveredWord && !isSelected,
-        'bg-crossword-cell-correct border-success text-success-foreground': isCorrect,
-        'text-foreground': hasUserInput && !isCorrect,
-        'text-muted-foreground': !hasUserInput
-      }
+        'bg-crossword-cell border-crossword-cell-border hover:bg-crossword-cell-active': cell.isEditable && !animation,
+        'ring-2 ring-primary ring-opacity-50 bg-crossword-cell-active': isSelected && !animation,
+        'bg-accent/30 border-accent': isInHoveredWord && !isSelected && !animation,
+        'bg-crossword-cell-correct border-success text-success-foreground': isCorrect && !animation,
+        'text-foreground': hasUserInput && !isCorrect && !animation,
+        'text-muted-foreground': !hasUserInput && !animation
+      },
+      animation
     );
   };
 

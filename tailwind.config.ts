@@ -107,10 +107,47 @@ export default {
             height: "0",
           },
         },
+        "shake": {
+          "0%, 100%": { transform: "translateX(0)" },
+          "10%, 30%, 50%, 70%, 90%": { transform: "translateX(-2px)" },
+          "20%, 40%, 60%, 80%": { transform: "translateX(2px)" }
+        },
+        "glow-success": {
+          "0%": { 
+            boxShadow: "0 0 0 0 hsl(var(--success) / 0.4)",
+            backgroundColor: "hsl(var(--crossword-cell-correct))"
+          },
+          "50%": { 
+            boxShadow: "0 0 0 8px hsl(var(--success) / 0.2)",
+            backgroundColor: "hsl(var(--success) / 0.2)"
+          },
+          "100%": { 
+            boxShadow: "0 0 0 0 hsl(var(--success) / 0)",
+            backgroundColor: "hsl(var(--crossword-cell-correct))"
+          }
+        },
+        "glow-error": {
+          "0%": { 
+            boxShadow: "0 0 0 0 hsl(var(--destructive) / 0.4)",
+            backgroundColor: "hsl(var(--crossword-cell))"
+          },
+          "50%": { 
+            boxShadow: "0 0 0 8px hsl(var(--destructive) / 0.2)",
+            backgroundColor: "hsl(var(--destructive) / 0.1)"
+          },
+          "100%": { 
+            boxShadow: "0 0 0 0 hsl(var(--destructive) / 0)",
+            backgroundColor: "hsl(var(--crossword-cell))"
+          }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "shake": "shake 0.5s ease-in-out",
+        "glow-success": "glow-success 1s ease-out",
+        "glow-error": "glow-error 1s ease-out",
+        "shake-error": "shake 0.5s ease-in-out, glow-error 1s ease-out",
       },
     },
   },
