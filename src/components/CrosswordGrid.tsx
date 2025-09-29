@@ -25,7 +25,7 @@ const words: CrosswordWord[] = [
     startRow: 0,
     startCol: 1,
     direction: 'across',
-    rule: 'Daiktavardis su nosine raide Ą'
+    rule: '„ą" rašoma, nes kitose formose trumpėja: drąsa – drąsos'
   },
   {
     id: 2,
@@ -34,7 +34,7 @@ const words: CrosswordWord[] = [
     startRow: 2,
     startCol: 0,
     direction: 'across',
-    rule: 'Veiksmažodis su nosine raide Ę'
+    rule: '„ę" rašoma, nes kaitoje atsiranda „e": gęsti – geso'
   },
   {
     id: 3,
@@ -43,7 +43,7 @@ const words: CrosswordWord[] = [
     startRow: 4,
     startCol: 2,
     direction: 'across',
-    rule: 'Daiktavardis su nosine raide Į'
+    rule: '„į" rašoma, nes tai ilgas balsis, nekeičiamas: įka – įkaito'
   },
   {
     id: 4,
@@ -52,7 +52,7 @@ const words: CrosswordWord[] = [
     startRow: 1,
     startCol: 4,
     direction: 'down',
-    rule: 'Įvardis su nosine raide Ū'
+    rule: '„ū" rašoma, nes išlaikytas senas ilgas balsis (uo): mūsų – mums'
   },
   {
     id: 5,
@@ -61,7 +61,7 @@ const words: CrosswordWord[] = [
     startRow: 0,
     startCol: 1,
     direction: 'down',
-    rule: 'Daiktavardis su nosine raide Ą'
+    rule: '„ą" rašoma, nes šaknyje balsis trumpėja: sąvoka – sąvokos'
   }
 ];
 
