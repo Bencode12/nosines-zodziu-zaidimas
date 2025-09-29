@@ -62,10 +62,55 @@ const words: CrosswordWord[] = [
     startCol: 1,
     direction: 'down',
     rule: '„ą" rašoma, nes šaknyje balsis trumpėja: sąvoka – sąvokos'
+  },
+  {
+    id: 6,
+    word: 'NUOGĄSTAUTI',
+    clue: 'Jausti baimę, nerimauti',
+    startRow: 6,
+    startCol: 1,
+    direction: 'across',
+    rule: '„ą" rašoma šaknyje, balsis išlaikomas prieš st: nuogąstavimas – nuogastauja'
+  },
+  {
+    id: 7,
+    word: 'KĘSTI',
+    clue: 'Ištvermingai pakęsti',
+    startRow: 8,
+    startCol: 3,
+    direction: 'across',
+    rule: '„ę" rašoma šaknyje, nes kaitoje virsta „e": kęsti – kentė – kentėjo'
+  },
+  {
+    id: 8,
+    word: 'MĄSTYTI',
+    clue: 'Galvoti, apmąstyti',
+    startRow: 10,
+    startCol: 0,
+    direction: 'across',
+    rule: '„ą" šaknyje prieš st, kitose formose: mąsto – mastė'
+  },
+  {
+    id: 9,
+    word: 'SĄRAŠAS',
+    clue: 'Dalykų išvardijimas',
+    startRow: 7,
+    startCol: 7,
+    direction: 'down',
+    rule: '„ą" šaknyje, nes daugiskaitoje balsis kinta: sąrašas – sąrašo'
+  },
+  {
+    id: 10,
+    word: 'ŽĄSIS',
+    clue: 'Vandens paukštis',
+    startRow: 12,
+    startCol: 5,
+    direction: 'across',
+    rule: '„ą" rašoma, nes kitose formose balsis trumpėja: žąsis – žąsies'
   }
 ];
 
-const GRID_SIZE = 8;
+const GRID_SIZE = 15;
 
 export default function CrosswordGrid() {
   const [grid, setGrid] = useState<CellData[][]>([]);
@@ -300,7 +345,7 @@ export default function CrosswordGrid() {
         </p>
       </div>
 
-      <div className="grid grid-cols-8 gap-0 shadow-soft rounded-lg overflow-hidden bg-white p-2">
+      <div className="grid grid-cols-15 gap-0 shadow-soft rounded-lg overflow-hidden bg-white p-2">
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <div
