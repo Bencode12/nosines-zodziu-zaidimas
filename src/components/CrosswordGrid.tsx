@@ -20,17 +20,17 @@ interface CellData {
 const words: CrosswordWord[] = [
   {
     id: 1,
-    word: 'KĄSNIS',
-    clue: 'Maisto gabalas, kurį galima sukramtyti',
+    word: 'DRĄSA',
+    clue: 'Nebijojimas, narsa',
     startRow: 0,
-    startCol: 2,
+    startCol: 1,
     direction: 'across',
     rule: 'Daiktavardis su nosine raide Ą'
   },
   {
     id: 2,
-    word: 'ŠĘSTI',
-    clue: 'Užimti sėdimą padėtį',
+    word: 'GĘSTI',
+    clue: 'Užgesinti, išsijungti',
     startRow: 2,
     startCol: 0,
     direction: 'across',
@@ -38,30 +38,30 @@ const words: CrosswordWord[] = [
   },
   {
     id: 3,
-    word: 'ĮEITI',
-    clue: 'Patekti į vidų',
+    word: 'ĮKA',
+    clue: 'Paprotys, įpratimas',
     startRow: 4,
-    startCol: 1,
+    startCol: 2,
     direction: 'across',
-    rule: 'Veiksmažodis su nosine raide Į'
+    rule: 'Daiktavardis su nosine raide Į'
   },
   {
     id: 4,
-    word: 'UŽUOT',
-    clue: 'Vietoje, pakeičiant',
+    word: 'MŪSŲ',
+    clue: 'Mums priklausantis',
     startRow: 1,
     startCol: 4,
     direction: 'down',
-    rule: 'Prieveiksmo žodis su nosine raide Ų'
+    rule: 'Įvardis su nosine raide Ū'
   },
   {
     id: 5,
-    word: 'MĄSTYTI',
-    clue: 'Apmąstyti, galvoti',
+    word: 'SĄVOKA',
+    clue: 'Supratimas, samprata',
     startRow: 0,
-    startCol: 2,
+    startCol: 1,
     direction: 'down',
-    rule: 'Veiksmažodis su nosine raide Ą'
+    rule: 'Daiktavardis su nosine raide Ą'
   }
 ];
 
