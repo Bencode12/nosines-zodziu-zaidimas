@@ -120,6 +120,14 @@ export default function CrosswordGrid() {
   const [completedWords, setCompletedWords] = useState<Set<number>>(new Set());
   const [cellAnimations, setCellAnimations] = useState<{[key: string]: string}>({});
   const [wordFeedback, setWordFeedback] = useState<{[wordId: number]: 'correct' | 'incorrect' | null}>({});
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     initializeGrid();
@@ -316,10 +324,10 @@ export default function CrosswordGrid() {
     const animation = cellAnimations[cellKey];
 
     return cn(
-      'w-10 h-10 border flex items-center justify-center text-lg font-semibold cursor-pointer transition-all duration-200',
+      'border flex items-center justify-center font-semibold cursor-pointer transition-all duration-200 select-none touch-manipulation',
       {
         'bg-crossword-empty border-crossword-cell-border': !cell.isEditable,
-        'bg-crossword-cell border-crossword-cell-border hover:bg-crossword-cell-active': cell.isEditable && !animation,
+        'bg-crossword-cell border-crossword-cell-border hover:bg-crossword-cell-active active:bg-crossword-cell-active': cell.isEditable && !animation,
         'ring-2 ring-primary ring-opacity-50 bg-crossword-cell-active': isSelected && !animation,
         'bg-accent/30 border-accent': isInHoveredWord && !isSelected && !animation,
         'bg-crossword-cell-correct border-success text-success-foreground': isCorrect && !animation,
@@ -335,62 +343,80 @@ export default function CrosswordGrid() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-8 p-6" onKeyDown={handleKeyDown} tabIndex={0}>
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
+    <div className="flex flex-col items-center gap-4 sm:gap-6 lg:gap-8 p-3 sm:p-4 lg:p-6 w-full" onKeyDown={handleKeyDown} tabIndex={0}>
+      <div className="text-center px-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
           Lietuvių kalbos kryžiažodis
         </h1>
-        <p className="text-muted-foreground">
-          Žodžiai su nosinėmis raidėmis. Užveskite pelytę ant žodžio, kad pamatytumėte taisyklę.
+        <p className="text-sm sm:text-base text-muted-foreground">
+          Žodžiai su nosinėmis raidėmis. {isMobile ? 'Palieskite žodį, kad pamatytumėte taisyklę.' : 'Užveskite pelytę ant žodžio, kad pamatytumėte taisyklę.'}
         </p>
       </div>
 
-      <div className="grid grid-cols-15 gap-0 shadow-soft rounded-lg overflow-hidden bg-white p-2">
-        {grid.map((row, rowIndex) =>
-          row.map((cell, colIndex) => (
-            <div
-              key={`${rowIndex}-${colIndex}`}
-              className={getCellClasses(rowIndex, colIndex)}
-              onClick={() => handleCellClick(rowIndex, colIndex)}
-            >
-              {cell.isEditable ? (
-                userAnswers[rowIndex][colIndex] || ''
-              ) : ''}
-            </div>
-          ))
-        )}
+      {/* Responsive grid container with horizontal scroll on mobile */}
+      <div className="w-full overflow-x-auto overflow-y-visible px-2 sm:px-4">
+        <div className="inline-block min-w-full sm:flex sm:justify-center">
+          <div className="shadow-soft rounded-lg overflow-hidden bg-card p-1 sm:p-2" 
+               style={{ 
+                 display: 'grid',
+                 gridTemplateColumns: 'repeat(15, 1fr)',
+                 gap: 0,
+                 minWidth: 'fit-content'
+               }}>
+            {grid.map((row, rowIndex) =>
+              row.map((cell, colIndex) => (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`${getCellClasses(rowIndex, colIndex)} w-7 h-7 text-sm sm:w-9 sm:h-9 sm:text-base lg:w-10 lg:h-10 lg:text-lg`}
+                  onClick={() => handleCellClick(rowIndex, colIndex)}
+                >
+                  {cell.isEditable ? (
+                    userAnswers[rowIndex][colIndex] || ''
+                  ) : ''}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="w-full max-w-2xl">
-        <h2 className="text-xl font-semibold mb-4">Užuominos:</h2>
-        <div className="grid gap-4 md:grid-cols-2">
+      <div className="w-full max-w-4xl px-4">
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Užuominos:</h2>
+        <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
           {words.map(word => (
             <div
               key={word.id}
               className={cn(
-                'p-4 rounded-lg border transition-all duration-200 cursor-pointer relative group',
+                'p-3 sm:p-4 rounded-lg border transition-all duration-200 cursor-pointer relative group',
                 {
                   'bg-success/10 border-success text-success-foreground': completedWords.has(word.id),
-                  'bg-card border-border hover:border-accent hover:shadow-soft': !completedWords.has(word.id)
+                  'bg-card border-border hover:border-accent hover:shadow-soft active:border-accent active:shadow-soft': !completedWords.has(word.id)
                 }
               )}
               onMouseEnter={() => handleWordHover(word.id)}
               onMouseLeave={() => handleWordHover(null)}
+              onTouchStart={() => handleWordHover(word.id)}
+              onTouchEnd={() => setTimeout(() => handleWordHover(null), 3000)}
             >
               <div className="flex justify-between items-start mb-2">
-                <span className="font-semibold text-primary">
+                <span className="font-semibold text-primary text-sm sm:text-base">
                   {word.id}. {word.direction === 'across' ? '→' : '↓'}
                 </span>
                 {completedWords.has(word.id) && (
                   <span className="text-success">✓</span>
                 )}
               </div>
-              <p className="text-sm">{word.clue}</p>
+              <p className="text-xs sm:text-sm">{word.clue}</p>
               
-              {/* Tooltip */}
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-tooltip-bg text-tooltip-text text-sm rounded-lg shadow-tooltip opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                {word.rule}
+              {/* Tooltip - only show on hover for desktop, on touch show below for mobile */}
+              <div className="hidden sm:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-tooltip-bg text-tooltip-text text-xs sm:text-sm rounded-lg shadow-tooltip opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none max-w-xs z-10">
+                <div className="whitespace-normal">{word.rule}</div>
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-tooltip-bg"></div>
+              </div>
+              
+              {/* Mobile tooltip - shows below the card */}
+              <div className="sm:hidden mt-2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-200 border-t border-border pt-2">
+                {word.rule}
               </div>
             </div>
           ))}
@@ -398,9 +424,9 @@ export default function CrosswordGrid() {
       </div>
 
       {completedWords.size === words.length && (
-        <div className="text-center p-6 bg-success/10 border border-success rounded-lg">
-          <h2 className="text-2xl font-bold text-success mb-2">Sveikiname! 🎉</h2>
-          <p className="text-success-foreground">Jūs sėkmingai išsprendėte kryžiažodį!</p>
+        <div className="text-center p-4 sm:p-6 bg-success/10 border border-success rounded-lg mx-4 max-w-2xl">
+          <h2 className="text-xl sm:text-2xl font-bold text-success mb-2">Sveikiname! 🎉</h2>
+          <p className="text-sm sm:text-base text-success-foreground">Jūs sėkmingai išsprendėte kryžiažodį!</p>
         </div>
       )}
     </div>

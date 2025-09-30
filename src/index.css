@@ -122,5 +122,11 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
   }
 }
